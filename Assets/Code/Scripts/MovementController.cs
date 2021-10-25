@@ -6,16 +6,19 @@ using UnityEngine;
 public class MovementController : MonoBehaviour
 {
     private Rigidbody _rigidbody;
+    private Transform _modelTransform;
 
     public Joystick joystick;
     
     [SerializeField] private float speed = 20f;
-    private Transform mainCamera;
+    private Transform _mainCamera;
 
     private void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
-        mainCamera = Camera.main.transform;
+        _modelTransform = GetComponentInChildren<SpriteRenderer>().transform;
+        _mainCamera = Camera.main.transform;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     private void Update()
@@ -28,12 +31,14 @@ public class MovementController : MonoBehaviour
         {
             Move(joystick.Horizontal, joystick.Vertical);
         }
+        
+        TurnToCamera();
     }
 
     private void Move(float x, float y)
     {
-        var right = mainCamera.right;
-        var forward = mainCamera.forward;
+        var right = _mainCamera.right;
+        var forward = _mainCamera.forward;
 
         right.y = 0f;
         forward.y = 0f;
@@ -45,5 +50,14 @@ public class MovementController : MonoBehaviour
         
         Vector3 target = transform.position + direction * speed * Time.deltaTime;
         _rigidbody.MovePosition(target);
+    }
+
+    private void TurnToCamera()
+    {
+        var cameraPos = _mainCamera.transform.position;
+
+        cameraPos.y = 0f;
+        
+        _modelTransform.LookAt(cameraPos);
     }
 }
