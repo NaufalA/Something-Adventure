@@ -1,22 +1,32 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Code.Scripts;
 using UnityEngine;
 
 public class NpcDetector : MonoBehaviour
 {
+    private NpcInteract _interact;
+
+    private void Start()
+    {
+        _interact = GetComponent<NpcInteract>();
+        _interact.enabled = false;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("NPC"))
         {
-            Debug.Log("Player enter");
+            _interact.enabled = true;
+            _interact.SetTargetNpc(other.gameObject);
         }
     }
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("NPC"))
         {
-            Debug.Log("Player exit");
+            _interact.enabled = false;
         }
     }
 }
